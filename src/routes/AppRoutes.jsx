@@ -2,18 +2,55 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "../pages/Login";
 import Dashboard from "../pages/Dashboard";
 import ProtectedRoute from "./protectedRoutes";
-
+import MainLayout from "../layout/MainLayout";
+import RoleRedirect from "./RoleRedirect";
 const AppRoutes = () => {
     return (
         <BrowserRouter>
             <Routes>
-                <Route path="/login" element={<Login />} />
-
                 <Route
                     path="/"
                     element={
+                        <RoleRedirect />
+                    }
+                />
+                <Route path="/login" element={<Login />} />
+
+                <Route
+                    path="/admin"
+                    element={
                         <ProtectedRoute>
-                            <Dashboard />
+                            <RoleBasedGuard allowedRoles={["ADMIN"]}>
+                                <MainLayout>
+                                    <AdminDashboard />
+                                </MainLayout>
+                            </RoleBasedGuard>
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/driver"
+                    element={
+                        <ProtectedRoute>
+                            <RoleBasedGuard allowedRoles={["DRIVER"]}>
+                                <MainLayout>
+                                    <DriverDashboard />
+                                </MainLayout>
+                            </RoleBasedGuard>
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/passenger"
+                    element={
+                        <ProtectedRoute>
+                            <RoleBasedGuard allowedRoles={["PASSENGER"]}>
+                                <MainLayout>
+                                    <PassengerDashboard />
+                                </MainLayout>
+                            </RoleBasedGuard>
                         </ProtectedRoute>
                     }
                 />

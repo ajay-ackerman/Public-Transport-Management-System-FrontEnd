@@ -13,12 +13,14 @@ const Login = () => {
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
-            const response = await api.post("/auth/login", { email, password });
+            const response = await api.post("/auth/login", {
+                email,
+                password
+            });
             const { token, user } = response.data;
 
             login(user, token);
             toast.success("Logged in successfully");
-
             navigate("/");
         } catch (error) {
             toast.error("Invalid credentials");
