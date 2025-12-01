@@ -18,6 +18,7 @@ const Login = () => {
                 password
             });
             const { token, user } = response.data;
+            console.log("user:  " + user.name + "\ntoken:  " + token);
 
             login(user, token);
             toast.success("Logged in successfully");

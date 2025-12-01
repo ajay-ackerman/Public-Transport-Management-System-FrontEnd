@@ -1,10 +1,10 @@
 import Sidebar from "./Sidebar";
 
-export default MainLayout = ({ children }) => {
-    <div className="display-flex">
+export default function MainLayout({ children }) {
+    return (<div className="flex">
         <Sidebar />
-        <main style={{ flexGrow: 1, padding: "20px" }}>
+        <main className="ml-20 md:ml-64 transition-all p-6 w-full min-h-screen bg-gray-100">
             {children}
         </main>
-    </div>
+    </div>)
 }

@@ -6,10 +6,21 @@ import { Toaster } from "react-hot-toast"
 function App() {
 
   return (
-    <AuthProvider>
-      <Toaster />
-      <AppRoutes />
-    </AuthProvider>
+    <>
+      <AuthProvider>
+        <Toaster toastOptions={{
+          // Define default options
+          className: '',
+          duration: 700,
+          removeDelay: 1000,
+          style: {
+            background: '#363636',
+            color: '#fff',
+          }
+        }} />
+        <AppRoutes />
+      </AuthProvider>
+    </>
   )
 }
 
