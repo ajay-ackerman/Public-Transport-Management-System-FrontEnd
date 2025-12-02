@@ -9,6 +9,7 @@ import AdminDashboard from "../pages/admin/AdminDashboard";
 import PassengerDashboard from "../pages/passenger/PassengerDashboard";
 import DriverDashboard from "../pages/driver/DriverDashboard";
 import ManageVehiclesPage from "../pages/admin/ManageVehiclePage";
+import ManageDriversPage from "../pages/admin/ManageDriversPage";
 const AppRoutes = () => {
     return (
         <BrowserRouter>
@@ -35,6 +36,7 @@ const AppRoutes = () => {
 
                 />
                 <Route path="admin/vehicles" element={<ManageVehiclesPage />} />
+                <Route path="admin/drivers" element={<ManageDriversPage />} />
 
                 <Route
                     path="/driver"
