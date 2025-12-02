@@ -8,6 +8,7 @@ import RoleBasedGuard from "./RoleBasedGuard";
 import AdminDashboard from "../pages/admin/AdminDashboard";
 import PassengerDashboard from "../pages/passenger/PassengerDashboard";
 import DriverDashboard from "../pages/driver/DriverDashboard";
+import ManageVehiclesPage from "../pages/admin/ManageVehiclePage";
 const AppRoutes = () => {
     return (
         <BrowserRouter>
@@ -31,7 +32,9 @@ const AppRoutes = () => {
                             </RoleBasedGuard>
                         </ProtectedRoute>
                     }
+
                 />
+                <Route path="admin/vehicles" element={<ManageVehiclesPage />} />
 
                 <Route
                     path="/driver"
