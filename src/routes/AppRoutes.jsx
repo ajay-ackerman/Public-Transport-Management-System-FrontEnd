@@ -35,8 +35,27 @@ const AppRoutes = () => {
                     }
 
                 />
-                <Route path="admin/vehicles" element={<ManageVehiclesPage />} />
-                <Route path="admin/drivers" element={<ManageDriversPage />} />
+                <Route path="admin/vehicles" element={
+                    <ProtectedRoute>
+                        <RoleBasedGuard allowedRoles={["ADMIN"]}>
+                            <MainLayout>
+                                <ManageVehiclesPage />
+                            </MainLayout>
+                        </RoleBasedGuard>
+                    </ProtectedRoute>
+                }
+                />
+
+                <Route path="admin/drivers" element={
+                    <ProtectedRoute>
+                        <RoleBasedGuard allowedRoles={["ADMIN"]}>
+                            <MainLayout>
+                                <ManageDriversPage />
+                            </MainLayout>
+                        </RoleBasedGuard>
+                    </ProtectedRoute>
+                }
+                />
 
                 <Route
                     path="/driver"

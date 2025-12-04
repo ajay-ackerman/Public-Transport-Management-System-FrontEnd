@@ -24,7 +24,7 @@ const ManageDriversPage = () => {
       if (driver.id) {
         return axios.put(`/users/${driver.id}`, driver);
       }
-      return axios.post(`/users/register-driver`, driver);
+      return axios.post(`/auth/register`, driver);
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["drivers"]);
@@ -91,7 +91,6 @@ const ManageDriversPage = () => {
                 <th className="p-3">Name</th>
                 <th className="p-3">Email</th>
                 <th className="p-3">Phone</th>
-                <th className="p-3">Status</th>
                 <th className="p-3 text-right">Actions</th>
               </tr>
             </thead>
@@ -102,18 +101,7 @@ const ManageDriversPage = () => {
                   <td className="p-3">{d.email}</td>
                   <td className="p-3">{d.phone}</td>
 
-                  <td className="p-3">
-                    <span
-                      className={`px-3 py-1 text-sm rounded-full 
-                        ${
-                          d.active
-                            ? "bg-green-100 text-green-600"
-                            : "bg-red-100 text-red-600"
-                        }`}
-                    >
-                      {d.active ? "ACTIVE" : "INACTIVE"}
-                    </span>
-                  </td>
+
 
                   <td className="p-3 flex justify-end gap-3">
                     <button

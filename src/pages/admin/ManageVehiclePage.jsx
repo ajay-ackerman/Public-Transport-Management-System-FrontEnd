@@ -60,6 +60,7 @@ const ManageVehiclesPage = () => {
             vehicleNo: form.get("vehicleNo"),
             vehicleType: form.get("vehicleType"),
             capacity: form.get("capacity"),
+            vehicleStatus: form.get("status")
         };
 
         mutationSave.mutate(vehicleData);
@@ -106,13 +107,13 @@ const ManageVehiclesPage = () => {
                                     <td className="p-3">{v.capacity}</td>
                                     <td className="p-3">
                                         <span
-                                            className={`px-3 py-1 text-sm rounded-full 
-                        ${v.vehicleStatus === "AVAILABLE"
+                                            className={`px-3 py-1 text-sm rounded-full
+                        ${v.vehicleStatus === "ACTIVE"
                                                     ? "bg-green-100 text-green-600"
-                                                    : v.vehicleStatus === "ON_TRIP"
+                                                    : v.vehicleStatus === "IN_MAINTAINANCE"
                                                         ? "bg-blue-100 text-blue-600"
                                                         : "bg-red-100 text-red-600"
-                                                }`}
+                                                } `}
                                         >
                                             {v.vehicleStatus}
                                         </span>
@@ -183,6 +184,17 @@ const ManageVehiclesPage = () => {
                                     name="capacity"
                                     min="1"
                                     defaultValue={editingVehicle?.capacity || ""}
+                                    required
+                                    className="w-full border px-3 py-2 rounded-md"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm mb-1">Status</label>
+                                <input
+                                    type="string"
+                                    name="Status"
+                                    min="1"
+                                    defaultValue={editingVehicle?.vehicleStatus || ""}
                                     required
                                     className="w-full border px-3 py-2 rounded-md"
                                 />
