@@ -1,5 +1,5 @@
 import { useState } from "react";
-import api from "../api/AxiosConfig";
+import api from "../api/axiosConfig";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -17,10 +17,8 @@ const Login = () => {
                 email,
                 password
             });
-            const { token, user } = response.data;
-            console.log("user:  " + user.name + "\ntoken:  " + token);
-
-            login(user, token);
+            const { token, user, refreshToken } = response.data;
+            login(user, token, refreshToken);
             toast.success("Logged in successfully");
             navigate("/");
         } catch (error) {
