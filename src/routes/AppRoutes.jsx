@@ -10,6 +10,8 @@ import PassengerDashboard from "../pages/passenger/PassengerDashboard";
 import DriverDashboard from "../pages/driver/DriverDashboard";
 import ManageVehiclesPage from "../pages/admin/ManageVehiclePage";
 import ManageDriversPage from "../pages/admin/ManageDriversPage";
+import ManageRoutes from "../pages/admin/ManageRoutes";
+import ManageTripPage from "../pages/admin/ManageTripPage";
 const AppRoutes = () => {
     return (
         <BrowserRouter>
@@ -51,6 +53,26 @@ const AppRoutes = () => {
                         <RoleBasedGuard allowedRoles={["ADMIN"]}>
                             <MainLayout>
                                 <ManageDriversPage />
+                            </MainLayout>
+                        </RoleBasedGuard>
+                    </ProtectedRoute>
+                }
+                />
+                <Route path="admin/routes" element={
+                    <ProtectedRoute>
+                        <RoleBasedGuard allowedRoles={["ADMIN"]}>
+                            <MainLayout>
+                                <ManageRoutes />
+                            </MainLayout>
+                        </RoleBasedGuard>
+                    </ProtectedRoute>
+                }
+                />
+                <Route path="admin/trips" element={
+                    <ProtectedRoute>
+                        <RoleBasedGuard allowedRoles={["ADMIN"]}>
+                            <MainLayout>
+                                <ManageTripPage />
                             </MainLayout>
                         </RoleBasedGuard>
                     </ProtectedRoute>

@@ -138,7 +138,7 @@ const ManageDriversPage = () => {
 
       {/* Modal */}
       {modalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+        <div className="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm flex items-center justify-center">
           <div className="bg-white p-6 rounded-lg w-96 shadow-lg">
             <h2 className="text-lg font-semibold mb-4">
               {editingDriver ? "Edit Driver" : "Add Driver"}
