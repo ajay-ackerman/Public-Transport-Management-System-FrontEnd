@@ -1,6 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "../pages/Login";
-import Dashboard from "../pages/Dashboard";
 import ProtectedRoute from "./protectedRoutes";
 import MainLayout from "../layout/MainLayout";
 import RoleRedirect from "./RoleRedirect";
@@ -12,6 +11,7 @@ import ManageVehiclesPage from "../pages/admin/ManageVehiclePage";
 import ManageDriversPage from "../pages/admin/ManageDriversPage";
 import ManageRoutes from "../pages/admin/ManageRoutes";
 import ManageTripPage from "../pages/admin/ManageTripPage";
+import ManageSchedulesPage from "../pages/admin/ManageSchedulesPage";
 const AppRoutes = () => {
     return (
         <BrowserRouter>
@@ -73,6 +73,16 @@ const AppRoutes = () => {
                         <RoleBasedGuard allowedRoles={["ADMIN"]}>
                             <MainLayout>
                                 <ManageTripPage />
+                            </MainLayout>
+                        </RoleBasedGuard>
+                    </ProtectedRoute>
+                }
+                />
+                <Route path="admin/schedules" element={
+                    <ProtectedRoute>
+                        <RoleBasedGuard allowedRoles={["ADMIN"]}>
+                            <MainLayout>
+                                <ManageSchedulesPage />
                             </MainLayout>
                         </RoleBasedGuard>
                     </ProtectedRoute>
