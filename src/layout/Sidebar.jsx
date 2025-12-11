@@ -67,7 +67,7 @@ const Sidebar = () => {
                   `}
                                 >
                                     {/* Fake icon just to keep alignment (you can add real icons later) */}
-                                    <div className="w-6 h-6 rounded bg-gray-700"></div>
+                                    <div className={`w-6 h-6 rounded ${active ? "bg-cyan-400" : "bg-gray-700"}`}></div>
 
                                     {/* Hide text when collapsed */}
                                     {isOpen && <span>{item.name}</span>}
