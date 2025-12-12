@@ -21,7 +21,6 @@ const Sidebar = () => {
         DRIVER: [
             { name: "Dashboard", path: "/driver" },
             { name: "My Trips", path: "/driver/trips" },
-            { name: "Start/End Trip", path: "/driver/trip-actions" },
         ],
         PASSENGER: [
             { name: "Dashboard", path: "/passenger" },

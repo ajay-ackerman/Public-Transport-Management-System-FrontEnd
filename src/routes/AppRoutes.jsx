@@ -12,6 +12,8 @@ import ManageDriversPage from "../pages/admin/ManageDriversPage";
 import ManageRoutes from "../pages/admin/ManageRoutes";
 import ManageTripPage from "../pages/admin/ManageTripPage";
 import ManageSchedulesPage from "../pages/admin/ManageSchedulesPage";
+import MyTripsPage from "../pages/driver/MyTripsPage";
+import SearchTripPage from "../pages/passenger/SearchTripPage";
 const AppRoutes = () => {
     return (
         <BrowserRouter>
@@ -101,6 +103,16 @@ const AppRoutes = () => {
                         </ProtectedRoute>
                     }
                 />
+                <Route path="driver/trips" element={
+                    <ProtectedRoute>
+                        <RoleBasedGuard allowedRoles={["DRIVER", "ADMIN"]}>
+                            <MainLayout>
+                                <MyTripsPage />
+                            </MainLayout>
+                        </RoleBasedGuard>
+                    </ProtectedRoute>
+                }
+                />
 
                 <Route
                     path="/passenger"
@@ -109,6 +121,18 @@ const AppRoutes = () => {
                             <RoleBasedGuard allowedRoles={["PASSENGER"]}>
                                 <MainLayout>
                                     <PassengerDashboard />
+                                </MainLayout>
+                            </RoleBasedGuard>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/passenger/search"
+                    element={
+                        <ProtectedRoute>
+                            <RoleBasedGuard allowedRoles={["PASSENGER"]}>
+                                <MainLayout>
+                                    <SearchTripPage />
                                 </MainLayout>
                             </RoleBasedGuard>
                         </ProtectedRoute>
