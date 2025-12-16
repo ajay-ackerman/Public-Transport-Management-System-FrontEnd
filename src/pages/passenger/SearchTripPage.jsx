@@ -3,22 +3,10 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../../api/axiosConfig";
 import { useAuth } from "../../context/AuthContext";
 
-//ui components
-const Card = ({ children }) => (
-    <div
-        style={{
-            border: "1px solid #ddd",
-            padding: "16px",
-            borderRadius: "10px",
-            background: "white",
-            marginBottom: "16px",
-        }}
-    >
-        {children}
-    </div>
-);
-
 export default function SearchTripPage() {
+    const auth = useAuth();
+    const queryClient = useQueryClient();
+
     const [form, setForm] = useState({
         source: "",
         destination: "",
@@ -26,16 +14,14 @@ export default function SearchTripPage() {
     });
 
     const [searchParams, setSearchParams] = useState(null);
-    const queryClient = useQueryClient();
-    const auth = useAuth();
+    const [openTripId, setOpenTripId] = useState(null);
+    const [selectedSeat, setSelectedSeat] = useState([]);
 
-    // ---------------- TRIP SEARCH QUERY ----------------
-    const { data: trips, isFetching } = useQuery({
+    /* ---------------- SEARCH TRIPS ---------------- */
+    const { data: trips = [], isFetching } = useQuery({
         queryKey: ["searchTrips", searchParams],
         queryFn: async () => {
-            if (!searchParams) return [];
             const { source, destination, date } = searchParams;
-
             const res = await api.get(
                 `/trip/search?source=${source}&destination=${destination}&date=${date}`
             );
@@ -44,150 +30,209 @@ export default function SearchTripPage() {
         enabled: !!searchParams,
     });
 
-    // ----------------- BOOK TRIP MUTATION -----------------
-    const bookMutation = useMutation({
-        mutationFn: async (tripId) =>
-            api.post("ticket/book", { tripId, userId: auth.user.id, }),
-        onSuccess: () => alert("Booked successfully!"),
+    /* ---------------- FETCH SEATS ---------------- */
+    const { data: seats = [], isLoading: seatsLoading } = useQuery({
+        queryKey: ["seats", openTripId],
+        queryFn: async () => {
+            const res = await api.get(`/seats/trip/${openTripId}`);
+            return res.data;
+        },
+        enabled: !!openTripId,
     });
 
-    // ----------------- HANDLE FORM -----------------
+    /* ---------------- BOOK SEAT ---------------- */
+    const bookMutation = useMutation({
+        mutationFn: async () =>
+            api.post("/ticket/book", {
+                tripId: openTripId,
+                seatIds: selectedSeat,
+                passengerId: auth.user.id,
+                fareAmount: 100
+            }),
+        onSuccess: () => {
+            alert("Ticket booked successfully!");
+            setOpenTripId(null);
+            setSelectedSeat([]);
+            queryClient.invalidateQueries(["seats", openTripId]);
+        },
+    });
+
     const handleSubmit = (e) => {
         e.preventDefault();
         setSearchParams(form);
     };
+    const toggleSelected = (e, seat) => {
+        if (!selectedSeat.includes(seat.id))
+            setSelectedSeat([...selectedSeat, seat.id]);
+        else
+            setSelectedSeat(selectedSeat.filter(number => number !== seat.id));
+    }
+
 
     return (
-        <div style={{ padding: "20px" }}>
-            <h1 style={{ marginBottom: "20px" }}>Search Trips</h1>
+        <div className="p-6 max-w-6xl mx-auto">
+            <h1 className="text-2xl font-bold mb-6">Search Trips</h1>
 
-            {/* ----------------- SEARCH FORM ----------------- */}
+            {/* ---------------- SEARCH FORM ---------------- */}
             <form
                 onSubmit={handleSubmit}
-                style={{
-                    display: "grid",
-                    gridTemplateColumns: "1fr 1fr 1fr auto",
-                    gap: "10px",
-                    marginBottom: "20px",
-                }}
+                className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8"
             >
                 <input
+                    className="border rounded-md px-3 py-2"
                     placeholder="Source"
                     required
                     value={form.source}
-                    onChange={(e) => setForm({ ...form, source: e.target.value })}
-                    style={{
-                        padding: "10px",
-                        border: "1px solid #ccc",
-                        borderRadius: "6px",
-                    }}
+                    onChange={(e) =>
+                        setForm({ ...form, source: e.target.value })
+                    }
                 />
-
                 <input
+                    className="border rounded-md px-3 py-2"
                     placeholder="Destination"
                     required
                     value={form.destination}
-                    onChange={(e) => setForm({ ...form, destination: e.target.value })}
-                    style={{
-                        padding: "10px",
-                        border: "1px solid #ccc",
-                        borderRadius: "6px",
-                    }}
+                    onChange={(e) =>
+                        setForm({ ...form, destination: e.target.value })
+                    }
                 />
-
                 <input
                     type="date"
+                    className="border rounded-md px-3 py-2"
                     required
                     value={form.date}
-                    onChange={(e) => setForm({ ...form, date: e.target.value })}
-                    style={{
-                        padding: "10px",
-                        border: "1px solid #ccc",
-                        borderRadius: "6px",
-                    }}
+                    onChange={(e) =>
+                        setForm({ ...form, date: e.target.value })
+                    }
                 />
-
-                <button
-                    type="submit"
-                    style={{
-                        padding: "10px 16px",
-                        background: "#2563eb",
-                        color: "white",
-                        borderRadius: "6px",
-                        border: "none",
-                    }}
-                >
+                <button className="bg-blue-600 text-white rounded-md px-4 py-2 hover:bg-blue-700">
                     Search
                 </button>
             </form>
 
-            {/* ----------------- SEARCH RESULTS ----------------- */}
             {isFetching && <p>Searching trips...</p>}
-
-            {!isFetching && trips?.length === 0 && searchParams && (
-                <p>No trips found for the given search.</p>
+            {!isFetching && trips.length === 0 && searchParams && (
+                <p className="text-gray-500">No trips found</p>
             )}
 
-            {trips?.map((trip) => (
-                <Card key={trip.id}>
-                    <h2 style={{ marginBottom: "10px" }}>
-                        {trip.routeName}{" "}
-                        <span
-                            style={{
-                                padding: "4px 8px",
-                                background: "#2563eb",
-                                color: "white",
-                                borderRadius: "6px",
-                                fontSize: "12px",
-                                marginLeft: "10px",
-                            }}
-                        >
-                            {trip.isScheduled ? "Scheduled" : "Ad-hoc"}
-                        </span>
-                    </h2>
-
-                    <div>
-                        <b>From:</b> {trip.source}
-                    </div>
-
-                    <div>
-                        <b>To:</b> {trip.destination}
-                    </div>
-
-                    <div>
-                        <b>Date:</b> {trip.date}
-                    </div>
-
-                    <div>
-                        <b>Start:</b> {trip.scheduledStart}
-                    </div>
-
-                    <div>
-                        <b>End:</b> {trip.scheduledEnd}
-                    </div>
-
-                    <div style={{ marginTop: "10px" }}>
-                        <b>Vehicle:</b> {trip.vehicleName}
-                    </div>
-
-                    {/* BOOK BUTTON */}
-                    <button
-                        onClick={() => bookMutation.mutate(trip.id)}
-                        disabled={bookMutation.isPending}
-                        style={{
-                            marginTop: "15px",
-                            background: "#059669",
-                            color: "white",
-                            padding: "10px 16px",
-                            borderRadius: "6px",
-                            border: "none",
-                            cursor: "pointer",
-                        }}
+            {/* ---------------- TRIP LIST ---------------- */}
+            <div className="space-y-4">
+                {trips.map((trip) => (
+                    <div
+                        key={trip.id}
+                        className="border rounded-lg p-4 bg-white shadow"
                     >
-                        {bookMutation.isPending ? "Booking..." : "Book Trip"}
-                    </button>
-                </Card>
-            ))}
+                        <div className="flex justify-between items-center">
+                            <h2 className="text-lg font-semibold">
+                                {trip.routeName}
+                            </h2>
+                            <span
+                                className={`text-xs px-2 py-1 rounded-full
+                                ${trip.isScheduled
+                                        ? "bg-blue-100 text-blue-600"
+                                        : "bg-green-100 text-green-600"
+                                    }`}
+                            >
+                                {trip.isScheduled ? "Scheduled" : "Ad-hoc"}
+                            </span>
+                        </div>
+
+                        <div className="mt-2 text-sm text-gray-700">
+                            <p>
+                                <b>From:</b> {trip.source}
+                            </p>
+                            <p>
+                                <b>To:</b> {trip.destination}
+                            </p>
+                            <p>
+                                <b>Date:</b> {trip.date}
+                            </p>
+                            <p>
+                                <b>Time:</b> {trip.scheduledStart} -{" "}
+                                {trip.scheduledEnd}
+                            </p>
+                            <p>
+                                <b>Vehicle:</b> {trip.vehicleNo}
+                            </p>
+                        </div>
+
+                        <button
+                            onClick={() => {
+                                setOpenTripId(trip.id);
+                                setSelectedSeat([]);
+                            }}
+                            className="mt-4 bg-emerald-600 text-white px-4 py-2 rounded-md hover:bg-emerald-700"
+                        >
+                            Book Trip
+                        </button>
+                    </div>
+                ))}
+            </div>
+
+            {/* ---------------- SEAT DIALOG ---------------- */}
+            {openTripId && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg p-6 w-[420px]">
+                        <h2 className="text-xl font-semibold mb-4">
+                            Select Seat
+                        </h2>
+
+                        {seatsLoading && <p>Loading seats...</p>}
+
+                        <div className="grid grid-cols-4 gap-3">
+                            {seats.map((seat) => {
+                                const isBooked =
+                                    seat.status === "BOOKED";
+                                const isSelected =
+                                    selectedSeat.includes(seat.id);
+
+                                return (
+                                    <button
+                                        key={seat.id}
+                                        disabled={isBooked}
+                                        onClick={(e) => toggleSelected(e, seat)}
+                                        className={`
+                                            px-3 py-2 rounded-md border text-sm
+                                            ${isBooked
+                                                ? "bg-gray-200 cursor-not-allowed"
+                                                : isSelected
+                                                    ? "bg-blue-600 text-white"
+                                                    : "bg-white hover:bg-blue-50"
+                                            }
+                                        `}
+                                    >
+                                        {seat.seatNumber}
+                                    </button>
+                                );
+                            })}
+                        </div>
+
+                        <div className="flex justify-end gap-3 mt-6">
+                            <button
+                                onClick={() => setOpenTripId(null)}
+                                className="px-4 py-2 border rounded-md"
+                            >
+                                Cancel
+                            </button>
+
+                            <button
+                                disabled={!selectedSeat || bookMutation.isPending}
+                                onClick={() => bookMutation.mutate()}
+                                className={`px-4 py-2 rounded-md text-white
+                                    ${selectedSeat
+                                        ? "bg-emerald-600 hover:bg-emerald-700"
+                                        : "bg-gray-400 cursor-not-allowed"
+                                    }
+                                `}
+                            >
+                                {bookMutation.isPending
+                                    ? "Booking..."
+                                    : "Confirm Booking"}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

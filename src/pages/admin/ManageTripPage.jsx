@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../../api/axiosConfig";
-import { FaEdit } from "react-icons/fa";
+import { FaEdit, FaTrash } from "react-icons/fa";
 
 // --------------------------------------
 // Reusable Components
@@ -87,6 +87,11 @@ export default function ManageTrips() {
         }
     });
 
+    const deleteRouteMutation = useMutation({
+        mutationFn: (id) => api.delete(`/trip/${id}`),
+        onSuccess: () => qc.invalidateQueries(["trip"]),
+    });
+
     const handleSubmit = () => {
         const payload = {
             ...form,
@@ -145,11 +150,17 @@ export default function ManageTrips() {
                                     <span><b>Scheduled End:</b> {trip.scheduledEnd}</span>
                                     <span><b>Scheduled:</b> {trip.isScheduled ? "YES" : "NO"}</span>
                                 </div>
-                                <button
+                                {/* <button
                                     onClick={() => { }}
-                                    className="text-blue-600 hover:text-blue-800 right-2"
+                                    className="text-blue-600 m-5 hover:text-blue-800 right-2"
                                 >
                                     <FaEdit size={16} />
+                                </button> */}
+                                <button
+                                    onClick={() => deleteRouteMutation.mutate(trip.id)}
+                                    className="text-red-600 m-5 hover:text-red-800"
+                                >
+                                    <FaTrash size={16} />
                                 </button>
                             </Card>
                         ))}
