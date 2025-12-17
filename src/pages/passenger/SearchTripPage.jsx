@@ -179,8 +179,8 @@ export default function SearchTripPage() {
 
                         {seatsLoading && <p>Loading seats...</p>}
 
-                        <div className="grid grid-cols-4 gap-3">
-                            {seats.map((seat) => {
+                        <div className="grid grid-cols-3  gap-2">
+                            {seats.sort((a, b) => a.seatNumber - b.seatNumber).map((seat) => {
                                 const isBooked =
                                     seat.status === "BOOKED";
                                 const isSelected =
@@ -192,7 +192,7 @@ export default function SearchTripPage() {
                                         disabled={isBooked}
                                         onClick={(e) => toggleSelected(e, seat)}
                                         className={`
-                                            px-3 py-2 rounded-md border text-sm
+                                            px-2 py-2 w-24 rounded-md border text-sm
                                             ${isBooked
                                                 ? "bg-gray-200 cursor-not-allowed"
                                                 : isSelected

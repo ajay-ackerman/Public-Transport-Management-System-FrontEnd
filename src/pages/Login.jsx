@@ -1,10 +1,10 @@
 import { useState } from "react";
 import api from "../api/axiosConfig";
 import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import toast from "react-hot-toast";
 
-const Login = () => {
+export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
@@ -13,26 +13,71 @@ const Login = () => {
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
-            const response = await api.post("/auth/login", {
+            const res = await api.post("/auth/login", {
                 email,
-                password
+                password,
             });
-            const { token, user, refreshToken } = response.data;
+
+            const { token, user, refreshToken } = res.data;
             login(user, token, refreshToken);
+
             toast.success("Logged in successfully");
             navigate("/");
-        } catch (error) {
-            toast.error("Invalid credentials");
+        } catch (err) {
+            toast.error("Invalid email or password");
         }
     };
 
     return (
-        <form onSubmit={handleLogin}>
-            <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="email" />
-            <input value={password} onChange={(e) => setPassword(e.target.value)} placeholder="password" type="password" />
-            <button type="submit">Login</button>
-        </form>
-    );
-};
+        <div className="min-h-screen flex items-center justify-center p-10 bg-gray-100">
+            <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
+                <h1 className="text-2xl font-bold text-center mb-6">
+                    Login to PTMS
+                </h1>
 
-export default Login;
+                <form onSubmit={handleLogin} className="space-y-4">
+                    <div>
+                        <label className="block text-sm mb-1">Email</label>
+                        <input
+                            type="email"
+                            required
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            className="w-full border px-3 py-2 rounded-md"
+                            placeholder="john@example.com"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm mb-1">Password</label>
+                        <input
+                            type="password"
+                            required
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className="w-full border px-3 py-2 rounded-md"
+                            placeholder="••••••••"
+                        />
+                    </div>
+
+                    <button
+                        type="submit"
+                        className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
+                    >
+                        Login
+                    </button>
+                </form>
+
+                <p className="text-sm text-center mt-4">
+                    Don’t have an account?{" "}
+                    <Link
+                        to="/register"
+                        className="text-blue-600 hover:underline"
+                    >
+                        Register
+                    </Link>
+                </p>
+            </div>
+        </div>
+    );
+}

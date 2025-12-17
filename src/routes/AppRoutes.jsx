@@ -14,6 +14,8 @@ import ManageTripPage from "../pages/admin/ManageTripPage";
 import ManageSchedulesPage from "../pages/admin/ManageSchedulesPage";
 import MyTripsPage from "../pages/driver/MyTripsPage";
 import SearchTripPage from "../pages/passenger/SearchTripPage";
+import MyBookingsPage from "../pages/passenger/MyBookingsPage";
+import Register from "../pages/Register";
 const AppRoutes = () => {
     return (
         <BrowserRouter>
@@ -25,6 +27,7 @@ const AppRoutes = () => {
                     }
                 />
                 <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
 
                 <Route
                     path="/admin"
@@ -133,6 +136,18 @@ const AppRoutes = () => {
                             <RoleBasedGuard allowedRoles={["PASSENGER"]}>
                                 <MainLayout>
                                     <SearchTripPage />
+                                </MainLayout>
+                            </RoleBasedGuard>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/passenger/bookings"
+                    element={
+                        <ProtectedRoute>
+                            <RoleBasedGuard allowedRoles={["PASSENGER"]}>
+                                <MainLayout>
+                                    <MyBookingsPage />
                                 </MainLayout>
                             </RoleBasedGuard>
                         </ProtectedRoute>
