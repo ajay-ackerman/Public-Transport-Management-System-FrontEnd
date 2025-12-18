@@ -82,21 +82,6 @@ export default function Register() {
                             className="w-full border px-3 py-2 rounded-md"
                         />
                     </div>
-
-                    <div>
-                        <label className="block text-sm mb-1">Role</label>
-                        <select
-                            value={form.role}
-                            onChange={(e) =>
-                                setForm({ ...form, role: e.target.value })
-                            }
-                            className="w-full border px-3 py-2 rounded-md"
-                        >
-                            <option value="PASSENGER">Passenger</option>
-                            <option value="DRIVER">Driver</option>
-                        </select>
-                    </div>
-
                     <button
                         type="submit"
                         className="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700 transition"
