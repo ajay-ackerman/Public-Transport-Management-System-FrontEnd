@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "../pages/Login";
-import ProtectedRoute from "./protectedRoutes";
+import ProtectedRoute from "./ProtectedRoutes";
 import MainLayout from "../layout/MainLayout";
 import RoleRedirect from "./RoleRedirect";
 import RoleBasedGuard from "./RoleBasedGuard";
