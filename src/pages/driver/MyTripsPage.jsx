@@ -121,7 +121,7 @@ export default function MyTripsPage() {
                     </div>
 
                     <div style={{ marginBottom: "6px" }}>
-                        <b>Date:</b> {trip.date}
+                        <b>Date:</b> {trip.tripDate}
                     </div>
 
                     {trip.isScheduled ? (
@@ -151,7 +151,7 @@ export default function MyTripsPage() {
                     )}
 
                     <div style={{ marginTop: "10px" }}>
-                        <b>Vehicle:</b> {trip.vehicleName}
+                        <b>Vehicle:</b> {trip.vehicleNo}
                     </div>
 
                     {/* -------- ACTION BUTTONS (Start / End Trip) -------- */}

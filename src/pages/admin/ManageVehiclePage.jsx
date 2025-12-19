@@ -92,7 +92,7 @@ const ManageVehiclesPage = () => {
                                 <th className="p-3">Vehicle No</th>
                                 <th className="p-3">Type</th>
                                 <th className="p-3">Capacity</th>
-                                <th className="p-3">Status</th>
+                                {/* <th className="p-3">Status</th> */}
                                 <th className="p-3 text-right">Actions</th>
                             </tr>
                         </thead>
@@ -105,19 +105,7 @@ const ManageVehiclesPage = () => {
                                     <td className="p-3">{v.vehicleNo}</td>
                                     <td className="p-3">{v.vehicleType}</td>
                                     <td className="p-3">{v.capacity}</td>
-                                    <td className="p-3">
-                                        <span
-                                            className={`px-3 py-1 text-sm rounded-full
-                        ${v.vehicleStatus === "ACTIVE"
-                                                    ? "bg-green-100 text-green-600"
-                                                    : v.vehicleStatus === "IN_MAINTAINANCE"
-                                                        ? "bg-blue-100 text-blue-600"
-                                                        : "bg-red-100 text-red-600"
-                                                } `}
-                                        >
-                                            {v.vehicleStatus}
-                                        </span>
-                                    </td>
+
 
                                     <td className="p-3 flex justify-end gap-3">
                                         <button
@@ -188,7 +176,7 @@ const ManageVehiclesPage = () => {
                                     className="w-full border px-3 py-2 rounded-md"
                                 />
                             </div>
-                            <div>
+                            {/* <div>
                                 <label className="block text-sm mb-1">Status</label>
                                 <input
                                     type="string"
@@ -198,7 +186,7 @@ const ManageVehiclesPage = () => {
                                     required
                                     className="w-full border px-3 py-2 rounded-md"
                                 />
-                            </div>
+                            </div> */}
 
                             {/* BUTTONS */}
                             <div className="flex justify-end gap-3 pt-3">
