@@ -4,33 +4,33 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import LoadingSpinner from "../components/LoadingSpinner";
+import { useMutation } from "@tanstack/react-query";
 
 export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
     const { login } = useAuth();
 
-    const handleLogin = async (e) => {
-        e.preventDefault();
-        try {
-            const res = await api.post("/auth/login", {
-                email,
-                password,
-            });
-            setIsLoading(true);
+    const loginMutation = useMutation({
+        mutationFn: (credentials) =>
+            api.post("/auth/login", credentials),
+
+        onSuccess: (res) => {
             const { token, user, refreshToken } = res.data;
             login(user, token, refreshToken);
-
             toast.success("Logged in successfully");
             navigate("/");
-        } catch (err) {
+        },
+
+        onError: () => {
             toast.error("Invalid email or password");
-        }
-        finally {
-            setIsLoading(false);
-        }
+        },
+    });
+
+    const handleLogin = (e) => {
+        e.preventDefault();
+        loginMutation.mutate({ email, password });
     };
 
     return (
@@ -49,7 +49,7 @@ export default function Login() {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             className="w-full border px-3 py-2 rounded-md"
-                            placeholder="john@example.com"
+                            disabled={loginMutation.isPending}
                         />
                     </div>
 
@@ -61,24 +61,26 @@ export default function Login() {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             className="w-full border px-3 py-2 rounded-md"
-                            placeholder="••••••••"
+                            disabled={loginMutation.isPending}
                         />
                     </div>
 
                     <button
                         type="submit"
-                        className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
+                        disabled={loginMutation.isPending}
+                        className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition disabled:opacity-60"
                     >
-                        {isLoading ? <LoadingSpinner /> : "Login"}
+                        {loginMutation.isPending ? (
+                            <LoadingSpinner text="Authenticating..." />
+                        ) : (
+                            "Login"
+                        )}
                     </button>
                 </form>
 
                 <p className="text-sm text-center mt-4">
                     Don’t have an account?{" "}
-                    <Link
-                        to="/register"
-                        className="text-blue-600 hover:underline"
-                    >
+                    <Link to="/register" className="text-blue-600 hover:underline">
                         Register
                     </Link>
                 </p>

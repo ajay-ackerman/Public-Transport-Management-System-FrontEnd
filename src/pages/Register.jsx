@@ -2,6 +2,8 @@ import { useState } from "react";
 import api from "../api/axiosConfig";
 import { useNavigate, Link } from "react-router-dom";
 import toast from "react-hot-toast";
+import LoadingSpinner from "../components/LoadingSpinner";
+import { useMutation } from "@tanstack/react-query";
 
 export default function Register() {
     const navigate = useNavigate();
@@ -14,15 +16,24 @@ export default function Register() {
         phone: "",
     });
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            await api.post("/auth/register", form);
+    const registerMutation = useMutation({
+        mutationFn: (data) => api.post("/auth/register", data),
+
+        onSuccess: () => {
             toast.success("Account created successfully");
             navigate("/login");
-        } catch (err) {
-            toast.error("Registration failed");
-        }
+        },
+
+        onError: (err) => {
+            toast.error(
+                err?.response?.data?.message || "Registration failed"
+            );
+        },
+    });
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        registerMutation.mutate(form);
     };
 
     return (
@@ -41,6 +52,7 @@ export default function Register() {
                             onChange={(e) =>
                                 setForm({ ...form, name: e.target.value })
                             }
+                            disabled={registerMutation.isPending}
                             className="w-full border px-3 py-2 rounded-md"
                         />
                     </div>
@@ -54,6 +66,7 @@ export default function Register() {
                             onChange={(e) =>
                                 setForm({ ...form, email: e.target.value })
                             }
+                            disabled={registerMutation.isPending}
                             className="w-full border px-3 py-2 rounded-md"
                         />
                     </div>
@@ -67,6 +80,7 @@ export default function Register() {
                             onChange={(e) =>
                                 setForm({ ...form, password: e.target.value })
                             }
+                            disabled={registerMutation.isPending}
                             className="w-full border px-3 py-2 rounded-md"
                         />
                     </div>
@@ -79,23 +93,27 @@ export default function Register() {
                             onChange={(e) =>
                                 setForm({ ...form, phone: e.target.value })
                             }
+                            disabled={registerMutation.isPending}
                             className="w-full border px-3 py-2 rounded-md"
                         />
                     </div>
+
                     <button
                         type="submit"
-                        className="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700 transition"
+                        disabled={registerMutation.isPending}
+                        className="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700 transition disabled:opacity-60"
                     >
-                        Register
+                        {registerMutation.isPending ? (
+                            <LoadingSpinner text="Creating account..." />
+                        ) : (
+                            "Register"
+                        )}
                     </button>
                 </form>
 
                 <p className="text-sm text-center mt-4">
                     Already have an account?{" "}
-                    <Link
-                        to="/login"
-                        className="text-blue-600 hover:underline"
-                    >
+                    <Link to="/login" className="text-blue-600 hover:underline">
                         Login
                     </Link>
                 </p>
