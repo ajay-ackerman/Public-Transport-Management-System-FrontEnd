@@ -3,10 +3,12 @@ import api from "../api/axiosConfig";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
 import toast from "react-hot-toast";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
     const { login } = useAuth();
 
@@ -17,7 +19,7 @@ export default function Login() {
                 email,
                 password,
             });
-
+            setIsLoading(true);
             const { token, user, refreshToken } = res.data;
             login(user, token, refreshToken);
 
@@ -25,6 +27,9 @@ export default function Login() {
             navigate("/");
         } catch (err) {
             toast.error("Invalid email or password");
+        }
+        finally {
+            setIsLoading(false);
         }
     };
 
@@ -64,7 +69,7 @@ export default function Login() {
                         type="submit"
                         className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
                     >
-                        Login
+                        {isLoading ? <LoadingSpinner /> : "Login"}
                     </button>
                 </form>
 
